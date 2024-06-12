@@ -8,12 +8,17 @@ export default function RegisterPage() {
     const[password, setPassword] = useState(''); 
     async function registerUser(ev) {
         ev.preventDefault(); // Prevents reloading of page on submit
-        await axios.post('/register', {
-            name,
-            email,
-            password,
-        });
-        alert('Registration successful. Now you can log in.');
+        try {
+            await axios.post('/register', {
+                name,
+                email,
+                password,
+            });
+            alert('Registration successful. Now you can log in.');
+        }
+        catch (e) {
+            alert('Registration failed. Please try again.');
+        }
     }
     return (
         <div className="mt-4 grow flex items-center justify-around">
@@ -34,7 +39,7 @@ export default function RegisterPage() {
                         onChange={ev => setPassword(ev.target.value)}/>
                     <button className="primary">Register</button>
                     <div className="text-center py-2 text-gray-500">
-                        Already a member? <Link to={'/login'} className="underline text-black">Register now</Link>
+                        Already a member? <Link to={'/login'} className="underline text-black">Login now</Link>
                     </div>
                 </form>
             </div>

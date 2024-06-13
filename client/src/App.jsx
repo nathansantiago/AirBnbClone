@@ -22,6 +22,8 @@ function App() {
           <Route path='/register' element={<RegisterPage/>} />
           {/* Question mark makes subpage optional */}
           <Route path='/account/:subpage?' element={<AccountPage/>}/>
+          {/* action page occurs when button is action button is clicked on account page e.g. add new place */}
+          <Route path='/account/:subpage/:action' element={<AccountPage/>}/>
         </Route>
       </Routes>
     </UserContextProvider>

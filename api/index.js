@@ -14,6 +14,8 @@ const jwtSecret = 'fdahjfhs43u128vu8s9df';
 
 app.use(express.json());
 app.use(cookieParser());
+// Allows images to be accessed by api
+app.use('/uploads', express.static(__dirname+'/uploads'));
 app.use(cors({
     credentials: true,
     origin: 'http://localhost:5173',
@@ -89,7 +91,7 @@ app.get('/profile', (req, res) => {
 // Uploads photos by link
 app.post('/upload-by-link', async (req, res) => {
     const {link} = req.body; // Grabs link from request
-    const newName = Date.now()+'.jpg';
+    const newName = 'photo' + Date.now()+'.jpg';
     await imageDownloader.image ({
         url: link,
         dest: __dirname+'/uploads/'+newName // __dirname gets full directory name, more safe

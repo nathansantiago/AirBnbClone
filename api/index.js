@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 const User = require('./models/User.js');
 const cookieParser = require('cookie-parser');
 const imageDownloader = require('image-downloader');
+const multer = require('multer');
+const fs = require('fs');
 require('dotenv').config();
 const app = express();
 
@@ -98,5 +100,21 @@ app.post('/upload-by-link', async (req, res) => {
     });
     res.json(newName);
 })
+
+const photosMiddleware = multer({dest: 'uploads/'});
+// Maximum number of photos is 100
+app.post('/upload', photosMiddleware.array('photos', 100), (req, res) => {
+    const uploadedFiles = [];
+    // Adds extension to uploaded files
+    for (let i=0; i < req.files.length; i++) {
+        const {path, originalname} = req.files[i];
+        const parts = originalname.split('.'); //Array of every part of the string
+        const ext = parts[parts.length-1];
+        const newPath = path + '.' + ext;
+        fs.renameSync(path, newPath); // Changes path of files
+        uploadedFiles.push(newPath.replace('uploads\\', '')); // Pushes new path to the array of uploaded files
+    }
+    res.json(uploadedFiles);
+});
 
 app.listen(4000);

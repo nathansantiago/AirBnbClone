@@ -6,7 +6,9 @@ import Layout from './components/Layout'
 import RegisterPage from './pages/RegisterPage'
 import axios from "axios";
 import { UserContextProvider } from './UserContext'
-import AccountPage from './pages/AccountPage'
+import ProfilePage from './pages/ProfilePage'
+import PlacesPage from './pages/PlacesPage'
+import PlacesFormPage from './pages/PlacesFormPage'
 
 axios.defaults.baseURL = 'http://localhost:4000';
 axios.defaults.withCredentials = true;
@@ -21,9 +23,10 @@ function App() {
           <Route path='/login' element={<LoginPage/>} />
           <Route path='/register' element={<RegisterPage/>} />
           {/* Question mark makes subpage optional */}
-          <Route path='/account/:subpage?' element={<AccountPage/>}/>
+          <Route path='/account' element={<ProfilePage/>}/>
           {/* action page occurs when button is action button is clicked on account page e.g. add new place */}
-          <Route path='/account/:subpage/:action' element={<AccountPage/>}/>
+          <Route path='/account/places' element={<PlacesPage/>}/>
+          <Route path='/account/places/new' element={<PlacesFormPage/>}/>
         </Route>
       </Routes>
     </UserContextProvider>

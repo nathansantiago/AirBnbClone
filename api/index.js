@@ -128,11 +128,19 @@ app.post('/places', (req, res) => {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => { // Verifies user token
         if (err) throw err;
         const placeDoc = await Place.create({
-            owner: userData._id, // Grabs user id from token
-            title, address, photos: addedPhotos, description,
+            owner: userData.id, // Grabs user id from token
+            title, address, photos: addedPhotos, description, // Photos need to be inside models schema
             perks, extraInfo, checkIn, checkOut, maxGuests,
         });
         res.json(placeDoc);
+    });
+});
+
+app.get('/places', (req, res) => {
+    const {token} = req.cookies; // Grabs user token
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => { // Verifies user token
+        const {id} = userData;
+        res.json( await Place.find({owner: id}) ); // JSON response with all places where the owner matches the id
     });
 });
 

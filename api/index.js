@@ -163,7 +163,7 @@ app.put('/places', async (req, res) => {
         const placeDoc = await Place.findById(id);
         if (userData.id === placeDoc.owner.toString()) {
             placeDoc.set({
-                title, address, addedPhotos, description,
+                title, address, photos: addedPhotos, description,
                 perks, extraInfo, checkIn, checkOut, maxGuests,
             });
             await placeDoc.save();

@@ -31,10 +31,10 @@ export default function PlacesPage () {
                 {places.length > 0 && places.map(place => (
                     // When clicked goes to place id subpage
                     <Link to={'/account/places/'+place._id} className="flex cursor-pointer gap-4 bg-gray-100 p-4 rounded-2xl">
-                        <div className="bg-gray-300 w-32 h-32 grow shrink-0">
+                        <div className="flex bg-gray-300 w-32 h-32 grow shrink-0">
                             {/* If photos length > 0 display the first one */}
                             {place.photos.length > 0 && (
-                                <img src={place.photos[0]} alt=""/>
+                                <img className='object-cover' src={'http://localhost:4000/uploads/' + place.photos[0]} alt=""/>
                             )}
                         </div>
                         <div className="grow-0 shrink">

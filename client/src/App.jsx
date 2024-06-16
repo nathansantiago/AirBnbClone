@@ -27,6 +27,7 @@ function App() {
           {/* action page occurs when button is action button is clicked on account page e.g. add new place */}
           <Route path='/account/places' element={<PlacesPage/>}/>
           <Route path='/account/places/new' element={<PlacesFormPage/>}/>
+          <Route path='/account/places/:id' element={<PlacesFormPage/>}/>
         </Route>
       </Routes>
     </UserContextProvider>

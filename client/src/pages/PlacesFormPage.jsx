@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PhotosUploader from "../components/PhotosUploader";
 import Perks from "../components/Perks";
 import AccountNav from "../components/AccountNav";
-import { Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 export default function PlacesFormPage() {
     // State for the form inputs
+    const {id} = useParams(); // Grabs page id
     const[title, setTitle] = useState('');
     const[address, setAddress] = useState('');
     const[addedPhotos, setAddedPhotos] = useState([]); // Array of added photos
@@ -17,6 +18,25 @@ export default function PlacesFormPage() {
     const[checkOut, setCheckOut] = useState('');
     const[maxGuests, setMaxGuests] = useState(1);
     const[redirect, setRedirect] = useState(false);
+
+    // Using id tries to call api with place id
+    useEffect(() => {
+        if (!id) {
+            return;
+        }
+        axios.get('/places/' + id).then(response => {
+            const {data} = response;
+            setTitle(data.title);
+            setAddress(data.address);
+            setAddedPhotos(data.photos);
+            setDescription(data.description);
+            setPerks(data.perks);
+            setExtraInfo(data.extraInfo);
+            setCheckIn(data.checkIn);
+            setCheckOut(data.checkOut);
+            setMaxGuests(data.maxGuests);
+        });
+    }, [id]);
     
     // Functions to simplify code
     function inputHeader(text) {
@@ -37,15 +57,29 @@ export default function PlacesFormPage() {
             </>
         );
     }
-    async function addNewPlace(ev) {
+    async function savePlace(ev) {
         ev.preventDefault();  // Prevents reload
-        await axios.post('/places', {  
-            // All data that should be sent to api when creating new place
+        const placeData = {
             title, address, addedPhotos, 
             description, perks, extraInfo, 
             checkIn, checkOut, maxGuests
-        });
-        setRedirect(true);
+        }
+        // Check if we have id
+        if (id) {
+            // update
+            await axios.put('/places', {  
+                // All data that should be sent to api when updating place
+                id, ...placeData
+            });
+            setRedirect(true);
+        } else {
+            // new place
+            await axios.post('/places', {  
+                // All data that should be sent to api when creating new place
+                ...placeData
+            });
+            setRedirect(true);
+        }
     }
 
     // Redirects when the save button is clicked
@@ -56,7 +90,7 @@ export default function PlacesFormPage() {
     return (
         <div>
             <AccountNav/>
-            <form onSubmit={addNewPlace}>
+            <form onSubmit={savePlace}>
                 {preInput('Title', 'Title for your place. Should be short and catchy.')}
                 <input type="text" value={title} onChange={ev => setTitle(ev.target.value)} placeholder="title, for example: My lovely apartment"/>
                 {preInput('Address', 'Address of this place.')}

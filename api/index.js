@@ -144,4 +144,32 @@ app.get('/places', (req, res) => {
     });
 });
 
+// Api endpoint for filling in form when updating places
+app.get('/places/:id', async (req, res) => {
+    const {id} = req.params; // Grabs page id
+    res.json(await Place.findById(id));
+});
+
+// Update place in mongodb
+app.put('/places', async (req, res) => {
+    const {token} = req.cookies; // Grabs user token
+    const {
+        id, title, address, addedPhotos, description,
+        perks, extraInfo, checkIn, checkOut, maxGuests,
+    } = req.body;
+    // Grabs user id
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => { // Verifies user token
+        if (err) throw err;
+        const placeDoc = await Place.findById(id);
+        if (userData.id === placeDoc.owner.toString()) {
+            placeDoc.set({
+                title, address, addedPhotos, description,
+                perks, extraInfo, checkIn, checkOut, maxGuests,
+            });
+            await placeDoc.save();
+            res.json('ok');
+        }
+    });
+});
+
 app.listen(4000);

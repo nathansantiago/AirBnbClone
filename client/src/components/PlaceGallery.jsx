@@ -41,7 +41,7 @@ export default function PlaceGallery ({place}) {
                     {place.photos?.[0] && (
                         <div>
                             {/* Need to fix image to fill container. */}
-                            <img onClick={() => setShowAllPhotos(true)} className="cursor-pointer aspect-square object-cover" src={"http://localhost:4000/uploads/"+place.photos[0]} alt=""/>
+                            <img onClick={() => setShowAllPhotos(true)} className="cursor-pointer aspect-square object-cover w-full" src={"http://localhost:4000/uploads/"+place.photos[0]} alt=""/>
                         </div>
                     )}
                 </div>

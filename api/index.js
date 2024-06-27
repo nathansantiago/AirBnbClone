@@ -27,6 +27,16 @@ app.use(cors({
 
 mongoose.connect(process.env.ATLAS_URI);
 
+// Grabs the userData using the request to verify the session
+function getUserDataFromReq(req) {
+    return new Promise((resolve, reject) => {
+        jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => { // Verifies user token
+            if (err) throw err;
+            resolve(userData);
+        }); 
+    });
+}
+
 // cors allows api and client to communicate on different ports
 app.get('/test', (req,res) => {
     res.json('test ok');
@@ -177,19 +187,26 @@ app.get('/places', async (req, res) => {
     res.json( await Place.find() );
 })
 
-app.post('/bookings', (req, res) => {
+app.post('/bookings', async (req, res) => {
     // Place is place id
     // Grabs required variables from req body
+    const userData = await getUserDataFromReq(req);
     const {
         place, checkIn, checkOut, numberOfGuests, name, phone, price
     } = req.body;
     BookingModel.create({
-        place, checkIn, checkOut, numberOfGuests, name, phone, price
+        place, checkIn, checkOut, numberOfGuests, name, phone, price, user: userData.id,
     }).then((doc) => {
         res.json(doc);
     }).catch((err) => {
         throw err;
     });
+});
+
+app.get('/bookings', async (req, res) => {
+    // First need to grab token because they are private
+    const userData = await getUserDataFromReq(req); // Grabs user data after verifying token
+    res.json( await BookingModel.find({user: userData.id}).populate('place') );
 });
 
 app.listen(4000);
